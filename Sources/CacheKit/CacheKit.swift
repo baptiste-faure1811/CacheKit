@@ -60,12 +60,13 @@ public final class CacheKit {
         try? data?.write(to: fileURL)
         return fileURL
     }
+
+    public static func url(for id: String, type: FileType) -> URL {
+        return cacheDirectory(for: type).appendingPathComponent(id + type.fileExtension)
+    }
 }
 
 extension CacheKit {
-    private static func url(for id: String, type: FileType) -> URL {
-        return cacheDirectory(for: type).appendingPathComponent(id + type.fileExtension)
-    }
 
     private static func cacheDirectory(for type: FileType) -> URL {
         let path = manager.urls(for: .documentDirectory, in: .userDomainMask)[0]
