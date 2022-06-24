@@ -64,6 +64,11 @@ public final class CacheKit {
     public static func url(for id: String, type: FileType) -> URL {
         return cacheDirectory(for: type).appendingPathComponent(id + type.fileExtension)
     }
+
+    public static func getCacheList(forType type: FileType) -> [String] {
+        guard let files = try? manager.contentsOfDirectory(atPath: cacheDirectory(for: type).path) else { return [] }
+        return files.map { $0.replacingOccurrences(of: type.fileExtension, with: "") }
+    }
 }
 
 extension CacheKit {
