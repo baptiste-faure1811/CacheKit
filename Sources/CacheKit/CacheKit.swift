@@ -1,5 +1,6 @@
 
-import Foundation
+import QuickLookThumbnailing
+import UIKit
 
 public final class CacheKit {
 
@@ -42,6 +43,23 @@ public final class CacheKit {
     public static func cacheVersion(for id: String) -> Int {
         return cacheUserDefaults?.integer(forKey: id) ?? 0
     }
+
+    public static func getThumbnail(for id: String, type: FileType, size: CGSize = CGSize(width: 56, height: 82), representations: QLThumbnailGenerator.Request.RepresentationTypes = .thumbnail) async -> UIImage? {
+        let request = await QLThumbnailGenerator.Request(fileAt: url(for: id, type: type), size: size, scale: UIScreen.main.scale, representationTypes: representations)
+        return await withCheckedContinuation { continuation in
+            QLThumbnailGenerator.shared.generateRepresentations(for: request) { thumbnail, type, error in
+                continuation.resume(returning: thumbnail?.uiImage)
+            }
+        }
+    }
+
+    public static func temporaryCache(data: Data?, name: String, fileExtension: String) -> URL? {
+        let cachePath = manager.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let fileURL = cachePath.appendingPathComponent(name).appendingPathExtension(fileExtension)
+        try? manager.removeItem(at: fileURL)
+        try? data?.write(to: fileURL)
+        return fileURL
+    }
 }
 
 extension CacheKit {
@@ -63,4 +81,3 @@ extension CacheKit {
         return finalPath
     }
 }
-
