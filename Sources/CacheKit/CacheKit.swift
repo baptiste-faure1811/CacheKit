@@ -33,7 +33,7 @@ public final class CacheKit {
 
     public static func resetCache() {
         try? manager.removeItem(at: globalCacheDirectory())
-        cacheUserDefaults?.removeSuite(named: cacheSuiteName)
+        cacheUserDefaults?.removePersistentDomain(forName: cacheSuiteName)
     }
 
     public static func isInCache(_ id: String, type: FileType) -> Bool {
